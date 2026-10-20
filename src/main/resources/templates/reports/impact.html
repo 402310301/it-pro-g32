@@ -1,0 +1,98 @@
+<div class="page-header">
+  <div>
+    <h1>Impact &amp; intelligence</h1>
+    <p class="muted">Calculated live from the donations, matches and audit trail in the database.</p>
+  </div>
+</div>
+
+{{#impact}}
+<section class="stat-grid">
+  <div class="stat stat-primary">
+    <div class="stat-label">Total redistributed</div>
+    <div class="stat-value">{{#redistributed}}<span class="stat-line">{{.}}</span>{{/redistributed}}</div>
+    <div class="stat-help">{{completed}} of {{total}} donations completed</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">Match rate</div>
+    <div class="stat-value">{{matchRate}}</div>
+    <div class="stat-help">Donations accepted by a recipient</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">Average distance</div>
+    <div class="stat-value">{{averageDistance}}</div>
+    <div class="stat-help">Donor to accepted recipient</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">Spoilage rate</div>
+    <div class="stat-value tone-danger">{{expiredRate}}</div>
+    <div class="stat-help">{{expired}} donation(s) expired before collection</div>
+  </div>
+</section>
+
+<div class="grid-2-1">
+  <section class="card">
+    <div class="card-header">
+      <h2>Donations per month</h2>
+      <p class="muted small">Listed vs completed, last six months</p>
+    </div>
+    <div class="chart" role="img" aria-label="Bar chart of donations listed and completed per month">
+      {{#months}}
+      <div class="chart-col">
+        <div class="chart-bars">
+          <div class="chart-bar bar-listed" style="height: {{listedHeight}}%" title="{{listed}} listed"><span>{{listed}}</span></div>
+          <div class="chart-bar bar-completed" style="height: {{completedHeight}}%" title="{{completed}} completed"><span>{{completed}}</span></div>
+        </div>
+        <div class="chart-label">{{label}}</div>
+      </div>
+      {{/months}}
+    </div>
+    <div class="legend"><span><i class="swatch bar-listed"></i>Listed</span><span><i class="swatch bar-completed"></i>Completed</span></div>
+  </section>
+
+  <section class="card">
+    <div class="card-header"><h2>Efficiency</h2></div>
+    <dl class="metrics">
+      <div><dt>Collection rate</dt><dd>{{collectionRate}}</dd><p class="muted tiny">Accepted donations that were delivered</p></div>
+      <div><dt>Adequate storage</dt><dd>{{adequateStorageRate}}</dd><p class="muted tiny">Accepted recipients with the right storage and enough room</p></div>
+      <div><dt>Average acceptance time</dt><dd>{{averageAcceptance}}</dd><p class="muted tiny">From listing to a recipient accepting</p></div>
+      <div><dt>Cancelled</dt><dd>{{cancelled}}</dd><p class="muted tiny">Withdrawn by donors</p></div>
+    </dl>
+  </section>
+</div>
+{{/impact}}
+
+{{#comparison}}
+<section class="section">
+  <div class="section-header">
+    <h2>Intelligent matching vs first come, first served</h2>
+    <p class="muted small">Each of the {{donationsCompared}} donations is replayed against today's recipient needs. "First come, first served" gives the food to the earliest-registered recipient in the same category, ignoring storage and distance.</p>
+  </div>
+  <div class="card table-card">
+    <div class="table-wrap">
+      <table class="compare">
+        <thead><tr><th>Measure</th><th>Intelligent engine</th><th>First come, first served</th></tr></thead>
+        <tbody>
+          <tr><td>Donations with a safe recipient</td><td class="strong">{{intelligent.matchedRate}}</td><td>{{baseline.matchedRate}}</td></tr>
+          <tr><td>Adequate storage</td><td class="strong">{{intelligent.adequateStorageRate}}</td><td>{{baseline.adequateStorageRate}}</td></tr>
+          <tr><td>Average distance</td><td class="strong">{{intelligent.averageDistance}}</td><td>{{baseline.averageDistance}}</td></tr>
+          <tr><td>Share of donation recipient can take</td><td class="strong">{{intelligent.averageQuantityFit}}</td><td>{{baseline.averageQuantityFit}}</td></tr>
+          <tr><td>Average match score</td><td class="strong">{{intelligent.averageScore}}</td><td>{{baseline.averageScore}}</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {{^scenarios.empty}}
+  <h3 class="subheading">Where the two approaches disagree</h3>
+  <div class="scenario-grid">
+    {{#scenarios}}
+    <article class="card scenario">
+      <div class="strong">{{reference}} <span class="muted small">&middot; {{category}}</span></div>
+      <p class="small"><span class="badge status-completed">Engine</span> {{intelligent}}</p>
+      <p class="small"><span class="badge status-cancelled">FCFS</span> {{baseline}}</p>
+    </article>
+    {{/scenarios}}
+  </div>
+  {{/scenarios.empty}}
+</section>
+{{/comparison}}

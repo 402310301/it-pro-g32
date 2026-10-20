@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in &middot; Intelligent Surplus Food Redistribution System</title>
+  <link rel="icon" href="/static/images/logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body class="login-body">
+  <main class="login">
+    <!-- Replace static/images/login-hero.png with your own photo -->
+    <section class="login-hero" style="background-image: url('/static/images/login-hero.png')">
+      <div class="login-hero-text">
+        <img src="/static/images/logo.png" alt="" class="login-hero-logo">
+        <h1>Good food should feed people, not landfill.</h1>
+        <p>The Intelligent Surplus Food Redistribution System connects Cape Town donors with community kitchens, shelters and food banks, and matches every donation to the recipient that can use it best.</p>
+        <ul class="login-points">
+          <li><span class="pill pill-green"></span> Smart matching on urgency, storage and distance</li>
+          <li><span class="pill pill-blue"></span> Volunteer drivers tracked from pickup to delivery</li>
+          <li><span class="pill pill-yellow"></span> Every change recorded in the audit trail</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="login-panel">
+      <div class="login-card">
+        <a href="/login" class="brand login-brand"><img src="/static/images/logo.png" alt="" class="brand-logo"> <span>Intelligent Surplus Food Redistribution System</span></a>
+        <h2 class="login-title">Sign in</h2>
+        <p class="muted">Welcome back. Use your account to continue.</p>
+
+        {{#signedOut}}<div class="flash flash-success">You have been signed out.</div>{{/signedOut}}
+        {{#error}}<div class="flash flash-error" role="alert">{{error}}</div>{{/error}}
+
+        <form method="post" action="/login" class="form">
+          <input type="hidden" name="next" value="{{next}}">
+          <label class="field">Username
+            <input type="text" name="username" value="{{username}}" autocomplete="username" autofocus required>
+          </label>
+          <label class="field">Password
+            <input type="password" name="password" autocomplete="current-password" required>
+          </label>
+          <button type="submit" class="button button-large button-block">Sign in</button>
+        </form>
+        <p class="muted small login-help">Forgotten your password? Ask an administrator to create a new account for you.</p>
+
+        {{#showDemo}}
+        <div class="demo-accounts">
+          <div class="demo-title">Demo accounts <span class="muted tiny">(shown while demo.seed=true)</span></div>
+          {{#demoAccounts}}
+          <div class="demo-row">
+            <span class="badge role-badge role-{{roleClass}}">{{roleLabel}}</span>
+            <code>{{username}}</code> / <code>{{password}}</code>
+            <span class="muted tiny">{{description}}</span>
+          </div>
+          {{/demoAccounts}}
+        </div>
+        {{/showDemo}}
+      </div>
+    </section>
+  </main>
+</body>
+</html>
