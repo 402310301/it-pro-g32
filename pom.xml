@@ -8,6 +8,7 @@
     <artifactId>food-redistribution</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
+    <name>Intelligent Food Redistribution</name>
     <name>Intelligent Surplus Food Redistribution System</name>
 
     <properties>
