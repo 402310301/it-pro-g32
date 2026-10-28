@@ -1,0 +1,228 @@
+<div class="page-header">
+  <div>
+    <h1>Platform administration</h1>
+    <p class="muted">Approve organisations, manage drivers, tune the matching engine and review the audit trail.</p>
+  </div>
+</div>
+
+{{#overview}}
+<section class="stat-grid">
+  <div class="stat"><div class="stat-label">Approved organisations</div><div class="stat-value">{{approvedOrganisations}}</div><div class="stat-help">{{donors}} donors &middot; {{recipients}} recipients</div></div>
+  <div class="stat"><div class="stat-label">Pending approval</div><div class="stat-value tone-accent">{{pendingOrganisations}}</div><div class="stat-help">Not matched until approved</div></div>
+  <div class="stat"><div class="stat-label">Active drivers</div><div class="stat-value tone-secondary">{{activeDrivers}}</div><div class="stat-help">{{tripsInProgress}} trip(s) in progress</div></div>
+  <div class="stat"><div class="stat-label">Matching activity</div><div class="stat-value">{{activeDonations}}</div><div class="stat-help">Active donations &middot; {{activeNeeds}} open needs</div></div>
+</section>
+{{/overview}}
+
+<div class="grid-2">
+  <section class="card">
+    <div class="card-header">
+      <h2>Matching engine weights</h2>
+      <p class="muted small">How much each factor counts. The eight weights must add up to {{weightTotal}}. Saving re-matches all open donations.</p>
+    </div>
+    {{#weightError}}<div class="flash flash-error">{{weightError}}</div>{{/weightError}}
+    <form method="post" action="/admin/weights" class="weights">
+      {{#weightFields}}
+      <label class="weight">
+        <span><span class="strong">{{label}}</span><br><span class="muted tiny">{{help}}</span></span>
+        <input type="number" name="{{name}}" value="{{value}}" min="0" max="100" step="1">
+      </label>
+      {{/weightFields}}
+      <button class="button button-block">Save weights</button>
+    </form>
+  </section>
+
+  <section class="card">
+    <div class="card-header"><h2>Register an organisation</h2><p class="muted small">New organisations start as "pending" until approved below.</p></div>
+    {{#orgErrors.general}}<div class="flash flash-error">{{orgErrors.general}}</div>{{/orgErrors.general}}
+    <form method="post" action="/admin/organisations" class="form" novalidate>
+      <label class="field{{#orgErrors.name}} has-error{{/orgErrors.name}}">Name
+        <input type="text" name="name" value="{{orgForm.name}}" maxlength="200">
+        {{#orgErrors.name}}<span class="field-error">{{orgErrors.name}}</span>{{/orgErrors.name}}
+      </label>
+      <div class="form-grid">
+        <label class="field">Role
+          <select name="role">{{#roleOptions}}<option value="{{value}}"{{#selected}} selected{{/selected}}>{{label}}</option>{{/roleOptions}}</select>
+        </label>
+        <label class="field{{#orgErrors.organisationType}} has-error{{/orgErrors.organisationType}}">Type
+          <select name="organisationType">
+            <option value="">Choose type</option>
+            <optgroup label="Recipients">{{#recipientTypeOptions}}<option value="{{value}}"{{#selected}} selected{{/selected}}>{{label}}</option>{{/recipientTypeOptions}}</optgroup>
+            <optgroup label="Donors">{{#donorTypeOptions}}<option value="{{value}}"{{#selected}} selected{{/selected}}>{{label}}</option>{{/donorTypeOptions}}</optgroup>
+          </select>
+          {{#orgErrors.organisationType}}<span class="field-error">{{orgErrors.organisationType}}</span>{{/orgErrors.organisationType}}
+        </label>
+        <label class="field{{#orgErrors.area}} has-error{{/orgErrors.area}}">Area
+          <select name="area"><option value="">Choose area</option>{{#areaOptions}}<option value="{{value}}"{{#selected}} selected{{/selected}}>{{label}}</option>{{/areaOptions}}</select>
+          {{#orgErrors.area}}<span class="field-error">{{orgErrors.area}}</span>{{/orgErrors.area}}
+        </label>
+        <label class="field">Contact person
+          <input type="text" name="contactName" value="{{orgForm.contactName}}" maxlength="120">
+        </label>
+      </div>
+      <label class="field{{#orgErrors.address}} has-error{{/orgErrors.address}}">Street address
+        <input type="text" name="address" value="{{orgForm.address}}" maxlength="255">
+        {{#orgErrors.address}}<span class="field-error">{{orgErrors.address}}</span>{{/orgErrors.address}}
+      </label>
+      <button class="button button-block">Register organisation</button>
+    </form>
+  </section>
+</div>
+
+<section class="section">
+  <div class="section-header"><h2>Organisations</h2></div>
+  <div class="card table-card">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Name</th><th>Role</th><th>Type</th><th>Area</th><th>Contact</th><th>Status</th></tr></thead>
+        <tbody>
+          {{#organisations}}
+          <tr>
+            <td class="strong">{{name}}<div class="muted small">{{address}}</div></td>
+            <td>{{roleLabel}}</td>
+            <td>{{organisationType}}</td>
+            <td>{{area}}</td>
+            <td>{{contactName}}</td>
+            <td>
+              {{#approved}}<span class="badge status-completed">Approved</span>{{/approved}}
+              {{^approved}}
+              <form method="post" action="/admin/organisations/{{id}}/approve"><button class="button button-small">Approve</button></form>
+              {{/approved}}
+            </td>
+          </tr>
+          {{/organisations}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<div class="grid-2-1" id="users">
+  <section class="card table-card">
+    <div class="card-header pad"><h2>User accounts</h2><p class="muted small">Who can sign in, and what they can do.</p></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Name</th><th>Role</th><th>Organisation</th><th>Last sign-in</th><th></th></tr></thead>
+        <tbody>
+          {{#users}}
+          <tr class="{{^active}}row-muted{{/active}}">
+            <td class="strong">{{fullName}}<div class="muted small">@{{username}}</div></td>
+            <td><span class="badge role-{{roleClass}}">{{roleLabel}}</span></td>
+            <td>{{#organisationName}}{{organisationName}}{{/organisationName}}{{^organisationName}}<span class="muted">All</span>{{/organisationName}}</td>
+            <td class="small nowrap">{{lastLoginLabel}}</td>
+            <td>
+              <form method="post" action="/admin/users/{{id}}/toggle">
+                {{#active}}<input type="hidden" name="active" value="false"><button class="button button-small button-ghost">Disable</button>{{/active}}
+                {{^active}}<input type="hidden" name="active" value="true"><button class="button button-small">Enable</button>{{/active}}
+              </form>
+            </td>
+          </tr>
+          {{/users}}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-header"><h2>Create a user</h2><p class="muted small">Donors and recipients must belong to an organisation of the same kind.</p></div>
+    {{#userErrors.general}}<div class="flash flash-error">{{userErrors.general}}</div>{{/userErrors.general}}
+    <form method="post" action="/admin/users" class="form" novalidate>
+      <label class="field{{#userErrors.fullName}} has-error{{/userErrors.fullName}}">Full name
+        <input type="text" name="fullName" value="{{userForm.fullName}}" maxlength="120">
+        {{#userErrors.fullName}}<span class="field-error">{{userErrors.fullName}}</span>{{/userErrors.fullName}}
+      </label>
+      <label class="field{{#userErrors.username}} has-error{{/userErrors.username}}">Username
+        <input type="text" name="username" value="{{userForm.username}}" maxlength="60" autocomplete="off">
+        {{#userErrors.username}}<span class="field-error">{{userErrors.username}}</span>{{/userErrors.username}}
+      </label>
+      <label class="field{{#userErrors.role}} has-error{{/userErrors.role}}">Role
+        <select name="role">{{#userRoleOptions}}<option value="{{value}}"{{#selected}} selected{{/selected}}>{{label}}</option>{{/userRoleOptions}}</select>
+      </label>
+      <label class="field{{#userErrors.organisationId}} has-error{{/userErrors.organisationId}}">Organisation
+        <select name="organisationId">
+          <option value="">None (administrator or coordinator)</option>
+          <optgroup label="Donors">{{#userDonorOrgOptions}}<option value="{{value}}"{{#selected}} selected{{/selected}}>{{label}}</option>{{/userDonorOrgOptions}}</optgroup>
+          <optgroup label="Recipients">{{#userRecipientOrgOptions}}<option value="{{value}}"{{#selected}} selected{{/selected}}>{{label}}</option>{{/userRecipientOrgOptions}}</optgroup>
+        </select>
+        {{#userErrors.organisationId}}<span class="field-error">{{userErrors.organisationId}}</span>{{/userErrors.organisationId}}
+      </label>
+      <label class="field{{#userErrors.password}} has-error{{/userErrors.password}}">Starting password
+        <input type="password" name="password" autocomplete="new-password">
+        {{#userErrors.password}}<span class="field-error">{{userErrors.password}}</span>{{/userErrors.password}}
+      </label>
+      <button class="button button-block">Create user</button>
+    </form>
+  </section>
+</div>
+
+<div class="grid-2-1">
+  <section class="card table-card">
+    <div class="card-header pad"><h2>Volunteer drivers</h2></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Driver</th><th>Vehicle</th><th>Capacity</th><th>Status</th></tr></thead>
+        <tbody>
+          {{#transporters}}
+          <tr class="{{^active}}row-muted{{/active}}">
+            <td class="strong">{{name}}<div class="muted small">{{phone}}</div></td>
+            <td>{{vehicle}}{{#refrigerated}}<div class="muted small">Refrigerated</div>{{/refrigerated}}</td>
+            <td>{{capacityLabel}}</td>
+            <td>
+              <form method="post" action="/admin/transporters/{{id}}/toggle">
+                {{#active}}<input type="hidden" name="active" value="false"><button class="button button-small button-ghost">Deactivate</button>{{/active}}
+                {{^active}}<input type="hidden" name="active" value="true"><button class="button button-small">Activate</button>{{/active}}
+              </form>
+            </td>
+          </tr>
+          {{/transporters}}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-header"><h2>Add a driver</h2></div>
+    {{#driverErrors.general}}<div class="flash flash-error">{{driverErrors.general}}</div>{{/driverErrors.general}}
+    <form method="post" action="/admin/transporters" class="form" novalidate>
+      <label class="field{{#driverErrors.name}} has-error{{/driverErrors.name}}">Name
+        <input type="text" name="name" value="{{driverForm.name}}" maxlength="120">
+        {{#driverErrors.name}}<span class="field-error">{{driverErrors.name}}</span>{{/driverErrors.name}}
+      </label>
+      <label class="field">Phone
+        <input type="text" name="phone" value="{{driverForm.phone}}" maxlength="40">
+      </label>
+      <label class="field{{#driverErrors.vehicle}} has-error{{/driverErrors.vehicle}}">Vehicle
+        <input type="text" name="vehicle" value="{{driverForm.vehicle}}" maxlength="120" placeholder="e.g. Toyota Quantum">
+        {{#driverErrors.vehicle}}<span class="field-error">{{driverErrors.vehicle}}</span>{{/driverErrors.vehicle}}
+      </label>
+      <label class="field{{#driverErrors.capacityKg}} has-error{{/driverErrors.capacityKg}}">Capacity (kg)
+        <input type="number" name="capacityKg" value="{{driverForm.capacityKg}}" min="1" step="1">
+        {{#driverErrors.capacityKg}}<span class="field-error">{{driverErrors.capacityKg}}</span>{{/driverErrors.capacityKg}}
+      </label>
+      <label class="check"><input type="checkbox" name="refrigerated"{{#driverForm.refrigerated}} checked{{/driverForm.refrigerated}}> <span>Refrigerated vehicle</span></label>
+      <button class="button button-block">Add driver</button>
+    </form>
+  </section>
+</div>
+
+<section class="section">
+  <div class="section-header"><h2>Audit trail</h2><p class="muted small">The 30 most recent changes. Entries are never edited or deleted.</p></div>
+  <div class="card table-card">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>When</th><th>Action</th><th>By</th><th>Record</th><th>Change</th></tr></thead>
+        <tbody>
+          {{#audit}}
+          <tr>
+            <td class="nowrap small">{{createdLabel}}</td>
+            <td class="strong">{{action}}</td>
+            <td>{{actor}}</td>
+            <td>{{recordType}} #{{recordId}}</td>
+            <td class="small">{{#hasChange}}{{previousLabel}} &rarr; {{newStatus}}{{/hasChange}}</td>
+          </tr>
+          {{/audit}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

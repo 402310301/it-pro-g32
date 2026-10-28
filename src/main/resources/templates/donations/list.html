@@ -1,0 +1,59 @@
+<div class="page-header">
+  <div>
+    <h1>Donations</h1>
+    <p class="muted">All surplus food offered on the network, newest first.</p>
+  </div>
+  {{#me.canOfferFood}}<a href="/donations/new" class="button"><svg class="icon"><use href="#i-plus"/></svg> Offer surplus food</a>{{/me.canOfferFood}}
+</div>
+
+<form method="get" action="/donations" class="filters card">
+  <label>Status
+    <select name="status">
+      <option value="">All statuses</option>
+      {{#statusOptions}}<option value="{{value}}"{{#selected}} selected{{/selected}}>{{label}}</option>{{/statusOptions}}
+    </select>
+  </label>
+  <label>Category
+    <select name="category">
+      <option value="">All categories</option>
+      {{#categoryOptions}}<option value="{{value}}"{{#selected}} selected{{/selected}}>{{label}}</option>{{/categoryOptions}}
+    </select>
+  </label>
+  <div class="filter-actions">
+    <button type="submit" class="button button-secondary">Filter</button>
+    {{#filtered}}<a href="/donations" class="button button-ghost">Clear</a>{{/filtered}}
+  </div>
+</form>
+
+<section class="card table-card">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Reference</th>
+          <th>Food</th>
+          <th>Donor</th>
+          <th>Expires</th>
+          <th>Urgency</th>
+          <th>Status</th>
+          <th>Recipient</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#donations}}
+        <tr>
+          <td class="nowrap"><a href="/donations/{{id}}" class="strong">{{reference}}</a></td>
+          <td><div class="food-cell"><img src="{{imageUrl}}" alt="" class="thumb"><div>{{quantityLabel}}<div class="muted small">{{category}}</div></div></div></td>
+          <td>{{donorName}}<div class="muted small">{{area}}</div></td>
+          <td class="nowrap">{{expiryLabel}}<div class="muted small">{{expiryRelative}}</div></td>
+          <td><span class="badge urgency-{{urgencyClass}}">{{urgency}}</span></td>
+          <td><span class="badge status-{{statusClass}}">{{status}}</span></td>
+          <td>{{#hasRecipient}}{{recipientName}}{{/hasRecipient}}{{^hasRecipient}}<span class="muted">-</span>{{/hasRecipient}}</td>
+        </tr>
+        {{/donations}}
+      </tbody>
+    </table>
+  </div>
+  {{^donations}}<p class="empty-state muted">No donations match these filters.</p>{{/donations}}
+  <p class="table-footer muted small">{{count}} donation(s)</p>
+</section>

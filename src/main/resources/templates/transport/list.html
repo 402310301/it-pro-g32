@@ -1,0 +1,87 @@
+<div class="page-header">
+  <div>
+    <h1>Transport coordination</h1>
+    <p class="muted">Assign volunteer drivers and track pickups and deliveries.</p>
+  </div>
+</div>
+
+<section class="section">
+  <div class="section-header"><h2>Waiting for a driver</h2></div>
+  {{#waiting}}
+  <article class="card trip-request">
+    <div>
+      <a href="/donations/{{id}}" class="strong">{{reference}}</a>
+      <div>{{allocatedLabel}} {{category}} <span class="muted">({{storageRequirement}})</span></div>
+      <div class="muted small"><svg class="icon"><use href="#i-pin"/></svg> {{donorName}}, {{area}} &rarr; {{recipientName}}</div>
+      <div class="muted small"><svg class="icon"><use href="#i-clock"/></svg> Collect before {{deadlineLabel}} ({{deadlineRelative}})</div>
+    </div>
+    <form method="post" action="/transport/assign" class="inline-form">
+      <input type="hidden" name="donationId" value="{{id}}">
+      <label>Driver
+        <select name="transporterId" required>
+          {{#driverOptions}}<option value="{{value}}">{{label}}</option>{{/driverOptions}}
+        </select>
+      </label>
+      <label>Pickup window
+        <input type="text" name="pickupWindow" required maxlength="80" placeholder="e.g. Today 14:00 - 16:00">
+      </label>
+      <button class="button">Assign driver</button>
+    </form>
+  </article>
+  {{/waiting}}
+  {{^waiting}}<div class="card empty-state muted">No donations are waiting for a driver.</div>{{/waiting}}
+</section>
+
+<section class="section">
+  <div class="section-header"><h2>Active trips</h2></div>
+  <div class="card table-card">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Donation</th><th>Route</th><th>Driver &amp; vehicle</th><th>Pickup</th><th>Status</th><th>Next step</th></tr></thead>
+        <tbody>
+          {{#activeTrips}}
+          <tr>
+            <td class="nowrap"><a href="/donations/{{donationId}}" class="strong">{{reference}}</a><div class="muted small">{{quantityLabel}} &middot; {{storageRequirement}}</div></td>
+            <td><div><span class="muted">From</span> {{donorName}}</div><div class="muted small">{{pickupAddress}}</div><div><span class="muted">To</span> {{recipientName}} <span class="muted small">({{deliveryArea}})</span></div></td>
+            <td>{{transporterName}}<div class="muted small">{{vehicle}} &middot; {{capacityLabel}}</div></td>
+            <td class="nowrap">{{pickupWindow}}</td>
+            <td><span class="badge trip-{{statusClass}}">{{statusLabel}}</span></td>
+            <td class="actions-cell">
+              {{#nextSteps}}
+              <form method="post" action="/transport/{{id}}/status">
+                <input type="hidden" name="status" value="{{value}}">
+                <button class="button button-small{{#danger}} button-danger-outline{{/danger}}">{{label}}</button>
+              </form>
+              {{/nextSteps}}
+            </td>
+          </tr>
+          {{/activeTrips}}
+        </tbody>
+      </table>
+    </div>
+    {{^activeTrips}}<p class="empty-state muted">No trips in progress.</p>{{/activeTrips}}
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-header"><h2>Finished trips</h2></div>
+  <div class="card table-card">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Donation</th><th>Route</th><th>Driver</th><th>Last update</th><th>Status</th></tr></thead>
+        <tbody>
+          {{#pastTrips}}
+          <tr>
+            <td><a href="/donations/{{donationId}}">{{reference}}</a></td>
+            <td>{{donorName}} &rarr; {{recipientName}}</td>
+            <td>{{transporterName}}</td>
+            <td class="nowrap">{{updatedLabel}}</td>
+            <td><span class="badge trip-{{statusClass}}">{{statusLabel}}</span></td>
+          </tr>
+          {{/pastTrips}}
+        </tbody>
+      </table>
+    </div>
+    {{^pastTrips}}<p class="empty-state muted">No finished trips yet.</p>{{/pastTrips}}
+  </div>
+</section>

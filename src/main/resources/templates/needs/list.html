@@ -1,0 +1,101 @@
+<div class="page-header">
+  <div>
+    <h1>Recipient needs</h1>
+    <p class="muted">What community organisations need, and what they can safely store. The matching engine reads this list.</p>
+  </div>
+</div>
+
+<div class="grid-2-1">
+  <section class="card table-card">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Organisation</th><th>Needs</th><th>Quantity</th><th>Storage</th><th>Open</th><th>Urgency</th><th></th></tr>
+        </thead>
+        <tbody>
+          {{#needs}}
+          <tr class="{{^active}}row-muted{{/active}}">
+            <td class="strong">{{organisationName}}
+              <div class="muted small">{{organisationType}} &middot; {{area}}</div>
+              {{^organisationApproved}}<span class="badge status-pending">Pending approval</span>{{/organisationApproved}}
+            </td>
+            <td>{{category}}<div class="muted small">{{description}}</div></td>
+            <td class="nowrap">{{quantityNeededLabel}} needed<div class="muted small">max {{maxPerDonationLabel}} per donation</div></td>
+            <td class="nowrap">{{storageType}}<div class="muted small">room for {{storageCapacityLabel}}</div></td>
+            <td class="nowrap">{{availability}}</td>
+            <td><span class="badge urgency-{{urgencyClass}}">{{urgency}}</span></td>
+            <td>
+              {{#active}}<form method="post" action="/needs/{{id}}/close"><button class="button button-small button-ghost">Close</button></form>{{/active}}
+              {{^active}}<form method="post" action="/needs/{{id}}/reopen"><button class="button button-small button-ghost">Reopen</button></form>{{/active}}
+            </td>
+          </tr>
+          {{/needs}}
+        </tbody>
+      </table>
+    </div>
+    {{^needs}}<p class="empty-state muted">No needs registered yet.</p>{{/needs}}
+  </section>
+
+  <section class="card">
+    <div class="card-header">
+      <h2>Register a need</h2>
+      <p class="muted small">Open donations in this category are re-matched straight away.</p>
+    </div>
+    {{#hasErrors}}<div class="flash flash-error">{{#errors.general}}{{errors.general}}{{/errors.general}}{{^errors.general}}Please correct the highlighted fields.{{/errors.general}}</div>{{/hasErrors}}
+    <form method="post" action="/needs" class="form" novalidate>
+      <label class="field{{#errors.organisationId}} has-error{{/errors.organisationId}}">Recipient organisation
+        <select name="organisationId">
+          <option value="">Choose organisation</option>
+          {{#recipientOptions}}<option value="{{value}}"{{#selected}} selected{{/selected}}>{{label}}</option>{{/recipientOptions}}
+        </select>
+        {{#errors.organisationId}}<span class="field-error">{{errors.organisationId}}</span>{{/errors.organisationId}}
+      </label>
+      <div class="form-grid">
+        <label class="field{{#errors.category}} has-error{{/errors.category}}">Category
+          <select name="category">
+            <option value="">Choose</option>
+            {{#categoryOptions}}<option value="{{value}}"{{#selected}} selected{{/selected}}>{{label}}</option>{{/categoryOptions}}
+          </select>
+          {{#errors.category}}<span class="field-error">{{errors.category}}</span>{{/errors.category}}
+        </label>
+        <label class="field{{#errors.urgency}} has-error{{/errors.urgency}}">Urgency
+          <select name="urgency">
+            {{#urgencyOptions}}<option value="{{value}}"{{#selected}} selected{{/selected}}>{{label}}</option>{{/urgencyOptions}}
+          </select>
+        </label>
+      </div>
+      <label class="field{{#errors.description}} has-error{{/errors.description}}">Description
+        <input type="text" name="description" value="{{form.description}}" maxlength="255" placeholder="e.g. Lunch for 80 learners">
+        {{#errors.description}}<span class="field-error">{{errors.description}}</span>{{/errors.description}}
+      </label>
+      <div class="form-grid">
+        <label class="field{{#errors.quantityNeeded}} has-error{{/errors.quantityNeeded}}">Quantity needed
+          <input type="number" name="quantityNeeded" min="0" step="0.1" value="{{form.quantityNeeded}}">
+          {{#errors.quantityNeeded}}<span class="field-error">{{errors.quantityNeeded}}</span>{{/errors.quantityNeeded}}
+        </label>
+        <label class="field{{#errors.maxPerDonation}} has-error{{/errors.maxPerDonation}}">Max per donation
+          <input type="number" name="maxPerDonation" min="0" step="0.1" value="{{form.maxPerDonation}}">
+          {{#errors.maxPerDonation}}<span class="field-error">{{errors.maxPerDonation}}</span>{{/errors.maxPerDonation}}
+        </label>
+        <label class="field{{#errors.storageType}} has-error{{/errors.storageType}}">Storage type
+          <select name="storageType">
+            {{#storageOptions}}<option value="{{value}}"{{#selected}} selected{{/selected}}>{{label}}</option>{{/storageOptions}}
+          </select>
+        </label>
+        <label class="field{{#errors.storageCapacity}} has-error{{/errors.storageCapacity}}">Storage capacity
+          <input type="number" name="storageCapacity" min="0" step="0.1" value="{{form.storageCapacity}}">
+          {{#errors.storageCapacity}}<span class="field-error">{{errors.storageCapacity}}</span>{{/errors.storageCapacity}}
+        </label>
+        <label class="field{{#errors.opensAt}} has-error{{/errors.opensAt}}">Opens
+          <input type="time" name="opensAt" value="{{form.opensAt}}">
+          {{#errors.opensAt}}<span class="field-error">{{errors.opensAt}}</span>{{/errors.opensAt}}
+        </label>
+        <label class="field{{#errors.closesAt}} has-error{{/errors.closesAt}}">Closes
+          <input type="time" name="closesAt" value="{{form.closesAt}}">
+          {{#errors.closesAt}}<span class="field-error">{{errors.closesAt}}</span>{{/errors.closesAt}}
+        </label>
+      </div>
+      <button type="submit" class="button button-block">Register need</button>
+    </form>
+  </section>
+</div>

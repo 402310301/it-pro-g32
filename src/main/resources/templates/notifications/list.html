@@ -1,0 +1,25 @@
+<div class="page-header">
+  <div>
+    <h1>Notifications</h1>
+    <p class="muted">Matches, reassignments, pickups, deliveries and expiries.</p>
+  </div>
+  <form method="post" action="/notifications/read-all"><button class="button button-secondary">Mark all as read</button></form>
+</div>
+
+<section class="card">
+  {{#notifications}}
+  <div class="notification{{^read}} unread{{/read}}">
+    <span class="notification-type type-{{typeClass}}">{{type}}</span>
+    <div class="notification-body">
+      <div class="strong">{{title}}</div>
+      <div>{{message}}</div>
+      <div class="muted tiny">{{createdLabel}} ({{createdRelative}})</div>
+    </div>
+    <div class="notification-actions">
+      {{#donationId}}<a href="/donations/{{donationId}}" class="link-text small">Open donation</a>{{/donationId}}
+      {{^read}}<form method="post" action="/notifications/{{id}}/read"><button class="button button-small button-ghost">Mark read</button></form>{{/read}}
+    </div>
+  </div>
+  {{/notifications}}
+  {{^notifications}}<p class="empty-state muted">No notifications.</p>{{/notifications}}
+</section>
