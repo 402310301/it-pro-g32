@@ -478,7 +478,7 @@ tbody tr:hover { background: var(--bg); }
 
 .button-green { background: var(--green); border-color: var(--green); }
 .button-green:hover { background: #256641; }
-.button-yellow { background: var(--yellow); border-color: var(--yellow); color: var(--brown-dark); }
+.button-yellow { background: var(--bg); border-color: var(--yellow); color: var(--brown-dark); }
 .button-yellow:hover { background: #d29d1c; }
 .button-blue { background: var(--blue); border-color: var(--blue); }
 .button-blue:hover { background: #185b8b; }
