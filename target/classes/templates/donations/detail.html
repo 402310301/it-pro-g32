@@ -1,0 +1,160 @@
+{{#donation}}
+<div class="page-header">
+  <div>
+    <a href="/donations" class="back-link">&larr; Donations</a>
+    <h1>{{reference}}</h1>
+    <div class="badges">
+      <span class="badge status-{{statusClass}}">{{status}}</span>
+      {{^finished}}<span class="badge urgency-{{urgencyClass}}">{{urgency}} urgency</span>{{/finished}}
+      <span class="muted small">Listed {{createdLabel}} by {{donorName}}</span>
+    </div>
+  </div>
+  <div class="actions">
+    {{#canRematch}}{{#me.canManage}}
+    <form method="post" action="/donations/{{id}}/recalculate"><button class="button button-secondary">Recalculate matches</button></form>
+    {{/me.canManage}}{{/canRematch}}
+    {{#mayConfirm}}
+    {{#canMarkCollected}}
+    <form method="post" action="/donations/{{id}}/collected"><button class="button">Recipient collected it</button></form>
+    {{/canMarkCollected}}
+    {{#canMarkCompleted}}
+    <form method="post" action="/donations/{{id}}/completed"><button class="button button-green">Confirm delivery</button></form>
+    {{/canMarkCompleted}}
+    {{/mayConfirm}}
+    {{#canCancel}}{{#mayCancel}}
+    <form method="post" action="/donations/{{id}}/cancel"><button class="button button-danger-outline">Cancel donation</button></form>
+    {{/mayCancel}}{{/canCancel}}
+  </div>
+</div>
+
+<div class="grid-2-1">
+  <section class="card">
+    <div class="card-header"><h2>Donation details</h2></div>
+    <div class="detail-intro">
+      <img src="{{imageUrl}}" alt="{{category}}" class="detail-image">
+      <p class="lead">{{description}}</p>
+    </div>
+    <dl class="details">
+      <div><dt>Food</dt><dd>{{quantityLabel}} &middot; {{category}}</dd></div>
+      <div><dt>Storage</dt><dd>{{storageRequirement}}</dd></div>
+      <div><dt>Expires</dt><dd>{{expiryLabel}} <span class="muted">({{expiryRelative}})</span></dd></div>
+      <div><dt>Collect before</dt><dd>{{deadlineLabel}} <span class="muted">({{deadlineRelative}})</span></dd></div>
+      <div><dt>Pickup</dt><dd>{{address}}, {{area}}</dd></div>
+      <div><dt>Transport</dt><dd>{{#transportRequired}}Volunteer driver needed{{/transportRequired}}{{^transportRequired}}Recipient collects{{/transportRequired}}</dd></div>
+      {{#hasRecipient}}<div><dt>Recipient</dt><dd class="strong">{{recipientName}} &middot; {{allocatedLabel}}</dd></div>{{/hasRecipient}}
+    </dl>
+  </section>
+
+  <section class="card">
+    <div class="card-header"><h2>Progress</h2></div>
+    <ol class="timeline">
+      {{#timeline}}
+      <li class="step step-{{state}}">
+        <span class="step-dot"></span>
+        <div><div class="strong">{{label}}</div>{{#time}}<div class="muted tiny">{{time}}</div>{{/time}}</div>
+      </li>
+      {{/timeline}}
+    </ol>
+  </section>
+</div>
+{{/donation}}
+
+{{#awaitingDriver}}
+<div class="flash flash-info">A recipient has accepted this donation and a volunteer driver is needed.{{#me.canManage}} <a href="/transport" class="strong">Assign a driver &rarr;</a>{{/me.canManage}}</div>
+{{/awaitingDriver}}
+
+<section class="section">
+  <div class="section-header">
+    <h2>Intelligent matches</h2>
+    <p class="muted small">Ranked by suitability, urgency, storage and distance. Weights can be changed in Admin.</p>
+  </div>
+  {{#matches}}{{#m}}
+  <article class="card match{{#topMatch}} match-top{{/topMatch}} match-{{statusClass}}">
+    <div class="match-head">
+      <div>
+        <div class="match-rank">#{{rank}}{{#topMatch}} &middot; Top match{{/topMatch}}</div>
+        <h3>{{recipientName}}</h3>
+        <div class="muted small">{{recipientType}} &middot; {{recipientArea}} &middot; {{distanceLabel}}</div>
+      </div>
+      <div class="score score-{{scoreClass}}">
+        <span class="score-value">{{scoreLabel}}</span><span class="score-unit">/100</span>
+        <span class="badge status-{{statusClass}}">{{statusLabel}}</span>
+      </div>
+    </div>
+    <p class="explanation">{{explanation}}</p>
+    {{#declineReason}}<p class="muted small">Declined: {{declineReason}}</p>{{/declineReason}}
+    <div class="match-body">
+      <dl class="details compact">
+        <div><dt>Demand</dt><dd>{{demand}}</dd></div>
+        <div><dt>Storage</dt><dd>{{storageType}}</dd></div>
+        <div><dt>Can accept</dt><dd>{{quantityLabel}} {{donation.unit}}</dd></div>
+        <div><dt>Open</dt><dd>{{availability}}</dd></div>
+      </dl>
+      <div class="factors">
+        {{#factors.asList}}
+        <div class="factor">
+          <span class="factor-label">{{label}}</span>
+          <span class="factor-bar"><span style="width: {{width}}%"></span></span>
+          <span class="factor-value">{{valueLabel}}</span>
+        </div>
+        {{/factors.asList}}
+      </div>
+    </div>
+    {{#recommended}}{{#canDecide}}{{#decide}}
+    <div class="match-actions">
+      <form method="post" action="/matches/{{id}}/accept" class="inline-form">
+        <label>Quantity to allocate
+          <input type="number" name="allocatedQuantity" min="0.1" step="0.1" max="{{quantityLabel}}" value="{{quantityLabel}}">
+        </label>
+        <button class="button">Accept for {{recipientName}}</button>
+      </form>
+      <form method="post" action="/matches/{{id}}/decline" class="inline-form">
+        <label>Reason (optional)
+          <input type="text" name="reason" maxlength="255" placeholder="e.g. no fridge space today">
+        </label>
+        <button class="button button-ghost">Decline</button>
+      </form>
+    </div>
+    {{/decide}}{{/canDecide}}{{/recommended}}
+  </article>
+  {{/m}}{{/matches}}
+  {{^matches}}
+  <div class="card empty-state">
+    <p class="strong">No suitable recipient yet.</p>
+    <p class="muted small">Nobody with the right storage currently needs this kind of food. Register a recipient need, then press "Recalculate matches".</p>
+  </div>
+  {{/matches}}
+</section>
+
+{{^trips.empty}}
+<section class="section">
+  <div class="section-header"><h2>Transport</h2></div>
+  <div class="card">
+    {{#trips}}
+    <div class="list-row">
+      <div>
+        <div class="strong">{{transporterName}} &middot; {{vehicle}}</div>
+        <div class="muted small">{{pickupWindow}} &middot; updated {{updatedLabel}}</div>
+      </div>
+      <span class="badge trip-{{statusClass}}">{{statusLabel}}</span>
+    </div>
+    {{/trips}}
+  </div>
+</section>
+{{/trips.empty}}
+
+<section class="section">
+  <div class="section-header"><h2>History</h2></div>
+  <div class="card">
+    {{#history}}
+    <div class="activity">
+      <span class="dot"></span>
+      <div>
+        <div class="strong">{{action}}</div>
+        <div class="muted small">{{actor}}{{#hasChange}} &middot; {{previousLabel}} &rarr; {{newStatus}}{{/hasChange}}</div>
+        <div class="muted tiny">{{createdLabel}}</div>
+      </div>
+    </div>
+    {{/history}}
+  </div>
+</section>
