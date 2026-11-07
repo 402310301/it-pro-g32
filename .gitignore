@@ -1,30 +1,6 @@
-
-# Maven build output
 target/
-
-# Java compiled files and logs
-*.class
-*.log
-logs/
-
-# Eclipse and IntelliJ files
 .classpath
 .project
 .settings/
-.idea/
-*.iml
-
-# VS Code settings
-.vscode/*
-!.vscode/extensions.json
-
-# Local database configuration and secrets
-/application.properties
-/.env
-/.env.*
-!/.env.example
-/secrets/
-
-# Operating system files
-.DS_Store
-Thumbs.db
+*.class
+*.log

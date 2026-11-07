@@ -1,9 +1,9 @@
--- ============================================================
--- Intelligent Surplus Food Redistribution System - MySQL 8 schema
--- The application runs this script automatically on start-up.
--- Every statement uses IF NOT EXISTS, so running it again is safe.
--- You can also run it by hand in MySQL Workbench.
--- ============================================================
+/*
+ Intelligent Surplus Food Redistribution System - MySQL 8 schema.
+ The application runs this script automatically on start-up.
+ Every statement uses IF NOT EXISTS, so running it again is safe.
+ You can also run it by hand in MySQL Workbench.
+*/
 
 CREATE TABLE IF NOT EXISTS organisations (
   id                BIGINT AUTO_INCREMENT PRIMARY KEY,
