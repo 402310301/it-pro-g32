@@ -34,7 +34,7 @@ public final class AdminController {
         this.view = view;
     }
 
-    /** Which form on the admin page was submitted, with its values and errors. */
+    /** It identifies which admin form page was submitted. This includes values and errors. */
     private record FormState(String which, Map<String, String> values, Map<String, String> errors) {
         static final FormState NONE = new FormState("", Map.of(), Map.of());
     }

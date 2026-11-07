@@ -1,7 +1,7 @@
 <div class="page-header">
   <div>
     <h1>Recipient needs</h1>
-    <p class="muted">What community organisations need, and what they can safely store. The matching engine reads this list.</p>
+    <p class="muted">This is what the community organisations require, and what they can store securely. This list is read by the machine engine.</p>
   </div>
 </div>
 
@@ -39,7 +39,7 @@
   <section class="card">
     <div class="card-header">
       <h2>Register a need</h2>
-      <p class="muted small">Open donations in this category are re-matched straight away.</p>
+      <p class="muted small">In this category, open donations are immediately re-matched.</p>
     </div>
     {{#hasErrors}}<div class="flash flash-error">{{#errors.general}}{{errors.general}}{{/errors.general}}{{^errors.general}}Please correct the highlighted fields.{{/errors.general}}</div>{{/hasErrors}}
     <form method="post" action="/needs" class="form" novalidate>
