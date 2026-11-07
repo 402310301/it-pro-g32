@@ -1,0 +1,101 @@
+<!-- Replace static/images/dashboard-banner.png with your own banner photo -->
+<section class="banner" style="background-image: url('/static/images/dashboard-banner.png');">
+  <div class="banner-text">
+    <p class="banner-eyebrow">{{me.roleLabel}}{{#me.organisationName}} &middot; {{me.organisationName}}{{/me.organisationName}}</p>
+    <h1>Welcome back, {{me.fullName}}</h1>
+    <p>Live overview of surplus food moving through the Western Cape network.</p>
+  </div>
+  {{#me.canOfferFood}}
+  <a href="/donations/new" class="button button-large button-yellow"><svg class="icon"><use href="#i-plus"/></svg> Offer surplus food</a>
+  {{/me.canOfferFood}}
+</section>
+
+{{#summary}}
+<section class="stat-grid">
+  <div class="stat stat-primary">
+    <div class="stat-label">Food redistributed</div>
+    <div class="stat-value">{{#redistributed}}<span class="stat-line">{{.}}</span>{{/redistributed}}</div>
+    <div class="stat-help">From {{completed}} completed donations</div>
+  </div>
+  <a class="stat" href="/donations">
+    <div class="stat-label">Active donations</div>
+    <div class="stat-value">{{active}}</div>
+    <div class="stat-help">Of {{total}} listed in total</div>
+  </a>
+  <a class="stat" href="/donations?status=Recipient+Recommended">
+    <div class="stat-label">Awaiting recipient decision</div>
+    <div class="stat-value tone-accent">{{awaitingDecision}}</div>
+    <div class="stat-help">Matched, not yet accepted</div>
+  </a>
+  <a class="stat" href="{{#me.canManage}}/transport{{/me.canManage}}{{^me.canManage}}/donations?status=Transport+Required{{/me.canManage}}">
+    <div class="stat-label">Needs a driver</div>
+    <div class="stat-value tone-secondary">{{awaitingDriver}}</div>
+    <div class="stat-help">{{awaitingCollection}} more waiting for pickup</div>
+  </a>
+</section>
+{{/summary}}
+
+<div class="grid-2-1">
+  <section class="card">
+    <div class="card-header">
+      <h2>Recent activity</h2>
+      <p class="muted small">Every status change is recorded in the audit trail.</p>
+    </div>
+    {{#activity}}
+    <div class="activity">
+      <span class="dot"></span>
+      <div>
+        <div class="strong">{{action}}</div>
+        <div class="muted small">{{actor}} &middot; {{recordType}} #{{recordId}}{{#hasChange}} &rarr; {{newStatus}}{{/hasChange}}</div>
+        <div class="muted tiny">{{createdLabel}} ({{createdRelative}})</div>
+      </div>
+    </div>
+    {{/activity}}
+    {{^activity}}<p class="muted">No activity yet.</p>{{/activity}}
+  </section>
+
+  <div class="stack">
+    <section class="card">
+      <div class="card-header"><h2><svg class="icon"><use href="#i-clock"/></svg> Expiring within 24 hours</h2></div>
+      {{#expiring}}
+      <a class="list-row" href="/donations/{{id}}">
+        <img src="{{imageUrl}}" alt="" class="thumb">
+        <div class="grow">
+          <div class="strong">{{reference}}</div>
+          <div class="muted small">{{quantityLabel}} {{category}} &middot; {{donorName}}</div>
+        </div>
+        <span class="badge urgency-{{urgencyClass}}">{{expiryRelative}}</span>
+      </a>
+      {{/expiring}}
+      {{^expiring}}<p class="muted small">Nothing is about to expire.</p>{{/expiring}}
+    </section>
+
+    <section class="card">
+      <div class="card-header"><h2>Waiting for a recipient</h2></div>
+      {{#awaitingDecision}}
+      <a class="list-row" href="/donations/{{id}}">
+        <img src="{{imageUrl}}" alt="" class="thumb">
+        <div class="grow">
+          <div class="strong">{{reference}}</div>
+          <div class="muted small">{{quantityLabel}} {{category}}</div>
+        </div>
+        <span class="link-text">Review &rarr;</span>
+      </a>
+      {{/awaitingDecision}}
+      {{^awaitingDecision}}<p class="muted small">No donations are waiting.</p>{{/awaitingDecision}}
+    </section>
+
+    {{#summary.hasUnread}}
+    <section class="card card-accent">
+      <p class="strong">You have {{summary.unread}} unread notification(s).</p>
+      <a href="/notifications" class="link-text">View notifications &rarr;</a>
+    </section>
+    {{/summary.hasUnread}}
+
+    <section class="card card-danger">
+      <h2 class="danger-title"><svg class="icon"><use href="#i-alert"/></svg> Food safety</h2>
+      <p class="small muted">All donations must comply with the Foodstuffs, Cosmetics and Disinfectants Act (Act 54 of 1972).
+        Do not donate food past its "use by" date, food that shows signs of spoilage, or food stored at the wrong temperature.</p>
+    </section>
+  </div>
+</div>

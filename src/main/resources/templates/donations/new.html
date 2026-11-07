@@ -1,0 +1,91 @@
+<div class="page-header">
+  <div>
+    <a href="/donations" class="back-link">&larr; Donations</a>
+    <h1>Offer surplus food</h1>
+    <p class="muted">Describe the food. The matching engine will rank suitable recipients as soon as you submit.</p>
+  </div>
+</div>
+
+{{#hasErrors}}<div class="flash flash-error">{{#errors.general}}{{errors.general}}{{/errors.general}}{{^errors.general}}Please correct the highlighted fields.{{/errors.general}}</div>{{/hasErrors}}
+
+<form method="post" action="/donations" class="card form" novalidate>
+  <fieldset>
+    <legend>The food</legend>
+    <div class="form-grid">
+      <label class="field{{#errors.donorId}} has-error{{/errors.donorId}}">Donor organisation *
+        <select name="donorId" required>
+          <option value="">Choose donor</option>
+          {{#donorOptions}}<option value="{{value}}"{{#selected}} selected{{/selected}}>{{label}}</option>{{/donorOptions}}
+        </select>
+        {{#errors.donorId}}<span class="field-error">{{errors.donorId}}</span>{{/errors.donorId}}
+      </label>
+      <label class="field{{#errors.category}} has-error{{/errors.category}}">Category *
+        <select name="category" required>
+          <option value="">Choose category</option>
+          {{#categoryOptions}}<option value="{{value}}"{{#selected}} selected{{/selected}}>{{label}}</option>{{/categoryOptions}}
+        </select>
+        {{#errors.category}}<span class="field-error">{{errors.category}}</span>{{/errors.category}}
+      </label>
+      <label class="field span-2{{#errors.description}} has-error{{/errors.description}}">Description *
+        <textarea name="description" rows="3" required placeholder="e.g. 50 loaves of sourdough baked this morning">{{form.description}}</textarea>
+        {{#errors.description}}<span class="field-error">{{errors.description}}</span>{{/errors.description}}
+      </label>
+      <label class="field{{#errors.quantity}} has-error{{/errors.quantity}}">Quantity *
+        <input type="number" name="quantity" min="0.1" step="0.1" value="{{form.quantity}}" required>
+        {{#errors.quantity}}<span class="field-error">{{errors.quantity}}</span>{{/errors.quantity}}
+      </label>
+      <label class="field{{#errors.unit}} has-error{{/errors.unit}}">Unit *
+        <select name="unit">
+          {{#unitOptions}}<option value="{{value}}"{{#selected}} selected{{/selected}}>{{label}}</option>{{/unitOptions}}
+        </select>
+        {{#errors.unit}}<span class="field-error">{{errors.unit}}</span>{{/errors.unit}}
+      </label>
+      <label class="field{{#errors.storageRequirement}} has-error{{/errors.storageRequirement}}">Storage requirement *
+        <select name="storageRequirement">
+          {{#storageOptions}}<option value="{{value}}"{{#selected}} selected{{/selected}}>{{label}}</option>{{/storageOptions}}
+        </select>
+        {{#errors.storageRequirement}}<span class="field-error">{{errors.storageRequirement}}</span>{{/errors.storageRequirement}}
+      </label>
+      <label class="field{{#errors.expiryAt}} has-error{{/errors.expiryAt}}">Expiry / use-by *
+        <input type="datetime-local" name="expiryAt" value="{{form.expiryAt}}" required>
+        {{#errors.expiryAt}}<span class="field-error">{{errors.expiryAt}}</span>{{/errors.expiryAt}}
+      </label>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Collection</legend>
+    <div class="form-grid">
+      <label class="field{{#errors.area}} has-error{{/errors.area}}">Area *
+        <select name="area">
+          {{#areaOptions}}<option value="{{value}}"{{#selected}} selected{{/selected}}>{{label}}</option>{{/areaOptions}}
+        </select>
+        {{#errors.area}}<span class="field-error">{{errors.area}}</span>{{/errors.area}}
+      </label>
+      <label class="field{{#errors.address}} has-error{{/errors.address}}">Collection address *
+        <input type="text" name="address" value="{{form.address}}" placeholder="e.g. 123 Main Road" required>
+        {{#errors.address}}<span class="field-error">{{errors.address}}</span>{{/errors.address}}
+      </label>
+      <label class="field{{#errors.collectionDeadline}} has-error{{/errors.collectionDeadline}}">Collect before *
+        <input type="datetime-local" name="collectionDeadline" value="{{form.collectionDeadline}}" required>
+        {{#errors.collectionDeadline}}<span class="field-error">{{errors.collectionDeadline}}</span>{{/errors.collectionDeadline}}
+      </label>
+      <label class="check span-2">
+        <input type="checkbox" name="transportRequired"{{#form.transportRequired}} checked{{/form.transportRequired}}>
+        <span><span class="strong">Volunteer transport needed</span><br><span class="muted small">Tick if you cannot deliver the food yourself.</span></span>
+      </label>
+    </div>
+  </fieldset>
+
+  <label class="check safety{{#errors.foodSafetyConfirmed}} has-error{{/errors.foodSafetyConfirmed}}">
+    <input type="checkbox" name="foodSafetyConfirmed"{{#form.foodSafetyConfirmed}} checked{{/form.foodSafetyConfirmed}}>
+    <span><span class="strong">I confirm this food is safe to eat</span><br>
+      <span class="muted small">It has been stored at the correct temperature, is within its use-by date and shows no signs of spoilage.</span>
+      {{#errors.foodSafetyConfirmed}}<br><span class="field-error">{{errors.foodSafetyConfirmed}}</span>{{/errors.foodSafetyConfirmed}}</span>
+  </label>
+
+  <div class="form-actions">
+    <a href="/donations" class="button button-ghost">Cancel</a>
+    <button type="submit" class="button button-large">List donation and find recipients</button>
+  </div>
+</form>

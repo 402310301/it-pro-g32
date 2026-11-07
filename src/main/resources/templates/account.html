@@ -1,0 +1,44 @@
+<div class="page-header">
+  <div>
+    <h1>My account</h1>
+    <p class="muted">Your profile and password.</p>
+  </div>
+</div>
+
+<div class="grid-2">
+  {{#user}}
+  <section class="card">
+    <div class="profile">
+      <span class="avatar avatar-large role-{{roleClass}}">{{initials}}</span>
+      <div>
+        <h2>{{fullName}}</h2>
+        <div class="muted">@{{username}}</div>
+      </div>
+    </div>
+    <dl class="details">
+      <div><dt>Role</dt><dd><span class="badge role-{{roleClass}}">{{roleLabel}}</span></dd></div>
+      <div><dt>Organisation</dt><dd>{{#organisationName}}{{organisationName}}{{/organisationName}}{{^organisationName}}All organisations{{/organisationName}}</dd></div>
+      <div><dt>Last sign-in</dt><dd>{{lastLoginLabel}}</dd></div>
+    </dl>
+  </section>
+  {{/user}}
+
+  <section class="card">
+    <div class="card-header"><h2>Change password</h2><p class="muted small">At least 6 characters.</p></div>
+    <form method="post" action="/account/password" class="form" novalidate>
+      <label class="field{{#errors.currentPassword}} has-error{{/errors.currentPassword}}">Current password
+        <input type="password" name="currentPassword" autocomplete="current-password">
+        {{#errors.currentPassword}}<span class="field-error">{{errors.currentPassword}}</span>{{/errors.currentPassword}}
+      </label>
+      <label class="field{{#errors.newPassword}} has-error{{/errors.newPassword}}">New password
+        <input type="password" name="newPassword" autocomplete="new-password">
+        {{#errors.newPassword}}<span class="field-error">{{errors.newPassword}}</span>{{/errors.newPassword}}
+      </label>
+      <label class="field{{#errors.confirmPassword}} has-error{{/errors.confirmPassword}}">Repeat new password
+        <input type="password" name="confirmPassword" autocomplete="new-password">
+        {{#errors.confirmPassword}}<span class="field-error">{{errors.confirmPassword}}</span>{{/errors.confirmPassword}}
+      </label>
+      <button class="button">Change password</button>
+    </form>
+  </section>
+</div>
